@@ -1,3 +1,18 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevents scrollbars */
+  width: 900px; /* Ensures that the body does not exceed the viewport width */
+  height: 900px; /* Ensures that the body height matches the viewport exactly */
+  margin: auto;
+}
+
 .hidden {
   display: none;
 }
@@ -17,15 +32,6 @@
   max-width: 100%;
   max-height: 100vh;
   /* Removed the background from canvas so the div background shows through */
-}
-html,
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Prevents scrollbars */
-  width: 700px; /* Ensures that the body does not exceed the viewport width */
-  height: 700px; /* Ensures that the body height matches the viewport exactly */
-  margin: auto;
 }
 
 #gameCanvas {

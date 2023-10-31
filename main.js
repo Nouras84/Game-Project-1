@@ -23,3 +23,5 @@ function resizeCanvas() {
   canvas.width = container.clientWidth;
   canvas.height = container.clientHeight;
 }
+
+const canvasElement = document.querySelector("#gameCanvas");

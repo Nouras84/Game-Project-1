@@ -11,24 +11,29 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="start-section">
+    <div id="start-section" style="background-color: black">
       <div class="container d-flex flex-column justify-content-center vh-100">
-        <h1 class="text-center mb-4" style="padding-bottom: 60px">
+        <h1
+          class="text-center mb-4"
+          style="padding-bottom: 60px; color: brown; font-size: 60px"
+        >
           Path of Palette
         </h1>
-        <h2 class="text-center mb-4">Game Instructions</h2>
+        <h2 class="text-center mb-4" style="color: white">Game Instructions</h2>
         <ol class="text-center mb-4" style="padding-left: 10px">
-          <li style="margin: 10px">
+          <li style="margin: 10px; color: white">
             Objective: Safeguard the path by ensuring only matching-colored
             balls traverse it.
           </li>
-          <li style="margin: 10px">
-            Controls: Press [SPACE] to explode mismatched balls. Use [LEFT] and
-            [RIGHT] arrows to switch paths when there are two.
+          <li style="margin: 10px; color: white">
+            Hit [SPACE] to blast away balls that clash with the path's color.
           </li>
-          <li style="margin: 10px">
-            Goal: Make it through 18 balls to access dual paths. But beware, if
-            8 mismatched balls cross the line, it's game over!
+          <li style="margin: 10px; color: white">
+            Be cautious not to destroy balls that match the path; that slip-up
+            will cost you a point.
+          </li>
+          <li style="margin: 10px; color: white">
+            Four lost points, and the game is over. Stay sharp!
           </li>
         </ol>
         <div class="text-center">
@@ -39,15 +44,14 @@
       </div>
     </div>
     <div id="game-section-level-1" class="hidden">
+      <div id="loss-counter" class="loss-counter">Losses: 0</div>
       <canvas id="gameCanvas"></canvas>
     </div>
-    <div id="game-section-level-2" class="hidden"></div>
+
     <div id="game-over-section" class="hidden"></div>
 
-    <script src="path.js"></script>
     <script src="ball.js"></script>
-    <script src="controls.js"></script>
-    <script src="ui.js"></script>
+
     <script src="main.js"></script>
   </body>
 </html>

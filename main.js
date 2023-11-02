@@ -7,7 +7,8 @@ const gameOverSection = document.getElementById("game-over-section");
 // Add click event to the Start Game button
 document.querySelector("button.btn").addEventListener("click", function () {
   startSection.style.display = "none";
-  level1Section.style.display = "block";
+  level1Section.style.display = "flex";
+  startGameLoop();
   // startLevel1();
 });
 

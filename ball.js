@@ -1,103 +1,141 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+class Ball {
+  constructor(x, y, size, color) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.color = color;
+  }
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
 
-const balls = [];
-const ballSize = 30;
-const ballFrequency = 2000;
+  move() {
+    this.y += 14; // Adjust the speed if necessary
+  }
 
-const colors = [
-  "#DC40B0",
-  "#00FF00",
-  "#0000FF",
-  "#FFFF00",
-  "#FF00FF",
-  "#00FFFF",
-];
-
-const specialColor = "#B11111";
-let missedBalls = 0; // Number of balls missed
-const decisionZoneY = canvas.height - 50; // The Y position of the decision line
-
-// Function to create a new ball
-function createBall() {
-  const newBall = {
-    x: canvas.width / 2,
-    y: 0, // Start at the top
-    size: ballSize,
-    color: colors[Math.floor(Math.random() * colors.length)],
-  };
-  balls.push(newBall);
+  isBelowLine(lineY) {
+    return this.y > lineY + this.size;
+  }
 }
 
-// Function to draw a ball
-function drawBall(ball) {
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-  ctx.fillStyle = ball.color;
-  ctx.fill();
-}
+// main.js
 
-// Function to update the game state
-function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+class Game {
+  constructor(canvas, lossCounterElement) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.lossCounterElement = lossCounterElement;
+    this.balls = [];
+    this.losses = 0;
+    this.ballFrequency = 1600; // How often to create balls
+    this.ballSize = 30;
+    this.decisionLineY = canvas.height - 240;
+    this.loseColor = "#B11111"; // Color that should not be clicked and can pass
+    this.colors = [
+      "#DC40B0",
+      "#00FF00",
+      "#0000FF",
+      "#FFFF00",
+      "#FF00FF",
+      "#00FFFF",
+    ];
 
-  // Draw the decision line
-  ctx.beginPath();
-  ctx.moveTo(0, 700);
-  ctx.lineTo(canvas.width, 700);
-  ctx.strokeStyle = "yellow";
-  ctx.stroke();
+    // Binding the methods to the instance
+    this.update = this.update.bind(this);
+    this.createBall = this.createBall.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
 
-  for (let i = balls.length - 1; i >= 0; i--) {
-    const ball = balls[i];
+    // Setting up the event listener for key presses
+    document.addEventListener("keydown", this.handleKeyPress);
+  }
 
-    // Draw the ball
-    drawBall(ball);
+  createBall() {
+    const isLoseColor = Math.random() < 2 / 7; // Chance to create a loseColor ball
+    const color = isLoseColor
+      ? this.loseColor
+      : this.colors[Math.floor(Math.random() * this.colors.length)];
+    const newBall = new Ball(this.canvas.width / 2, 0, this.ballSize, color);
+    this.balls.push(newBall);
+  }
 
-    // Move the ball down
-    ball.y += 10;
+  update() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear canvas
 
-    // Check if the ball crosses the decision line
-    if (ball.y > decisionZoneY + ball.size) {
-      if (ball.color !== specialColor) {
-        // Missed a non-special color ball
-        missedBalls++;
-        console.log(`Missed: ${missedBalls}`);
+    // Draw decision line
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.decisionLineY);
+    this.ctx.lineTo(this.canvas.width, this.decisionLineY);
+    this.ctx.strokeStyle = "rgba(255, 0, 0, 1)";
+    this.ctx.stroke();
+
+    for (let i = this.balls.length - 1; i >= 0; i--) {
+      const ball = this.balls[i];
+      ball.draw(this.ctx);
+      ball.move();
+
+      if (ball.isBelowLine(this.decisionLineY)) {
+        if (ball.color !== this.loseColor) {
+          this.losses++;
+          this.lossCounterElement.textContent = "Losses: " + this.losses;
+          if (this.losses >= 4) {
+            console.log("Game Over!");
+            this.gameOver();
+            return; // Stop the game loop
+          }
+        }
+        this.balls.splice(i, 1); // Remove the ball after crossing the line
       }
-      // Remove the ball regardless of color after crossing the line
-      balls.splice(i, 1);
     }
 
-    // Check for game over
-    if (missedBalls >= 4) {
-      console.log("Game Over!");
-      return; // Stop the game loop if game over
+    if (this.losses < 4) {
+      requestAnimationFrame(this.update);
     }
   }
 
-  // Continue the animation loop
-  requestAnimationFrame(update);
-}
-
-// Event listener for space bar
-document.addEventListener("keydown", (event) => {
-  if (event.code === "Space") {
-    for (let i = balls.length - 1; i >= 0; i--) {
-      const ball = balls[i];
-      if (ball.color !== specialColor) {
-        // Remove ball if it's not the special color
-        balls.splice(i, 1);
-        break; // Only remove one ball per space press
+  handleKeyPress(event) {
+    if (event.code === "Space") {
+      for (let i = this.balls.length - 1; i >= 0; i--) {
+        const ball = this.balls[i];
+        if (ball.y + ball.size < this.decisionLineY) {
+          if (ball.color === this.loseColor) {
+            this.losses++;
+            this.lossCounterElement.textContent = "Losses: " + this.losses;
+            console.log("You clicked the loseColor ball! Lost a point.");
+          }
+          this.balls.splice(i, 1);
+          break; // Remove only one ball per space press, and exit the loop
+        }
       }
     }
   }
-});
 
-// Start creating balls at a regular interval
-setInterval(createBall, ballFrequency);
+  startGameLoop() {
+    // Delay ball creation for 1 second
+    setTimeout(() => {
+      this.ballCreationInterval = setInterval(
+        this.createBall,
+        this.ballFrequency
+      );
+    }, 2000);
 
-// Start the game loop
-update();
+    this.update(); // Start the game update loop using the bound function
+  }
+
+  gameOver() {
+    clearInterval(this.ballCreationInterval);
+    // Additional game over logic can be added here
+  }
+}
+
+// Initialization code
+const gameCanvas = document.getElementById("gameCanvas");
+const lossCounterElement = document.getElementById("loss-counter");
+gameCanvas.width = window.innerWidth;
+gameCanvas.height = window.innerHeight;
+
+const game = new Game(gameCanvas, lossCounterElement);
+game.startGameLoop();

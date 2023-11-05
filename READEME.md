@@ -1,4 +1,6 @@
-Path of Palette:
+Path of Palette
+
+My first project at Ironhack web development Bootcamp
 
 Introduction
 Path of Palette is a web-based game built with HTML, CSS, and JavaScript. It challenges players to a color-matching test of reflexes and accuracy.

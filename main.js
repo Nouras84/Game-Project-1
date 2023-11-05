@@ -8,7 +8,6 @@ const gameOverSection = document.getElementById("game-over-section");
 document.querySelector("button.btn").addEventListener("click", function () {
   startSection.style.display = "none";
   level1Section.style.display = "flex";
-  startGameLoop();
   // startLevel1();
 });
 

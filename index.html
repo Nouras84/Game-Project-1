@@ -20,7 +20,7 @@
           Path of Palette
         </h1>
         <h2 class="text-center mb-4" style="color: white">Game Instructions</h2>
-        <ol class="text-center mb-4" style="padding-left: 10px">
+        <ol class="text-center mb-4" style="list-style: none">
           <li style="margin: 10px; color: white">
             Objective: Safeguard the path by ensuring only matching-colored
             balls traverse it.
@@ -46,6 +46,9 @@
     <div id="game-section-level-1" class="hidden">
       <div id="loss-counter" class="loss-counter">Losses: 0</div>
       <canvas id="gameCanvas"></canvas>
+      <button id="restart-button" class="btn btn-warning hidden">
+        Restart Game
+      </button>
     </div>
 
     <div id="game-over-section" class="hidden"></div>
